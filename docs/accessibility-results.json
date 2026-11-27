@@ -1,0 +1,32 @@
+[
+  {
+    "width": 390,
+    "route": "/",
+    "violations": []
+  },
+  {
+    "width": 390,
+    "route": "/portfolio",
+    "violations": []
+  },
+  {
+    "width": 390,
+    "route": "/privacy",
+    "violations": []
+  },
+  {
+    "width": 1440,
+    "route": "/",
+    "violations": []
+  },
+  {
+    "width": 1440,
+    "route": "/portfolio",
+    "violations": []
+  },
+  {
+    "width": 1440,
+    "route": "/privacy",
+    "violations": []
+  }
+]

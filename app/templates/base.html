@@ -8,12 +8,18 @@
 </title>
 <meta name="description" content="Авторские портреты, истории для брендов и фотография путешествий. Портфолио Александра Морозова. Демонстрационный проект.">
 <meta name="theme-color" content="#10100f">
+<link rel="canonical" href="{{ site_url }}{{ request.url.path }}">
+<meta property="og:url" content="{{ site_url }}{{ request.url.path }}">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="MOROZOV Photography">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{{ site.name }} — фотограф">
 <meta property="og:description" content="В поисках настоящего. Портреты, люди и истории.">
-<meta property="og:image" content="{{ request.url_for('static', path='images/portrait.webp') }}">
+<meta property="og:image" content="{{ site_url }}/static/images/portrait.webp">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/static/css/style.css">
+<noscript><link rel="stylesheet" href="/static/css/no-js.css"></noscript>
 {% block preload %}{% endblock %}
 <script src="/static/js/main.js" defer>
 </script>
@@ -21,10 +27,11 @@
 </script>
 </head>
 <body>
+<div class="scroll-progress" aria-hidden="true"></div>
 <a class="skip" href="#main">Перейти к содержимому</a>
 <header class="header">
-<a class="brand" href="/" aria-label="Морозов — главная">
-<span class="brand-mark">M</span>{{ site.brand }}<span class="brand-sub">PHOTOGRAPHY</span>
+<a class="brand" href="/" aria-label="MOROZOV Photography — главная">
+<span class="brand-mark" aria-hidden="true">m.</span>{{ site.brand }}<span class="brand-sub">PHOTOGRAPHY</span>
 </a>
 <button class="menu-toggle" aria-expanded="false" aria-controls="navigation" aria-label="Открыть меню">
 <span>
@@ -36,16 +43,17 @@
 <a href="/#work">Работы</a>
 <a href="/#about">Обо мне</a>
 <a href="/#services">Услуги</a>
-<a class="nav-contact" href="/#contact">Обсудим съёмку <span class="small-star" aria-hidden="true">✦</span>
+<a class="nav-contact" href="/#contact">Обсудим съёмку <span class="icon-arrow" aria-hidden="true"></span>
 </a>
 </nav>
 </header>
 {% block content %}{% endblock %}
 <footer class="footer">
+<p class="footer-statement">Сохраним <em>настоящее.</em></p>
 <a href="/" class="footer-brand">{{ site.brand }}</a>
 <span>© 2026 · Демонстрационный проект</span>
 <a href="/privacy">Конфиденциальность</a>
-<a href="/#main">Наверх</a>
+<a href="/#main">Наверх ↑</a>
 </footer>
 <dialog class="lightbox" aria-label="Просмотр фотографии">
 <button class="lightbox-close" aria-label="Закрыть просмотр">Закрыть ×</button>

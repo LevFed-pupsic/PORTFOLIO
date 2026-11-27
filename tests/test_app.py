@@ -236,3 +236,53 @@ def test_local_assets_and_links(setup):
     for work in content["works"]:
         assert (BASE / "static/images" / f"{work['image']}.webp").exists()
         assert (BASE / "static/images" / f"{work['image']}-small.webp").exists()
+
+
+def test_public_https_origin_behind_proxy(setup):
+    client, settings = setup
+    response = client.post('/api/inquiries', json=payload(settings),
+                           headers={'Origin': settings.site_url, 'Host': 'internal:8000'})
+    assert response.status_code == 201
+    assert count(settings) == 1
+
+
+@pytest.mark.parametrize('origin', ['https://evil.example', 'null',
+    'https://morozov-photography.de2.netrun.io.evil.example',
+    'https://morozov-photography.de2.netrun.io/path'])
+def test_forwarded_headers_do_not_allow_foreign_origin(setup, origin):
+    client, settings = setup
+    response = client.post('/api/inquiries', json=payload(settings), headers={
+        'Origin': origin, 'X-Forwarded-Proto': 'https',
+        'X-Forwarded-Host': 'evil.example',
+        'Forwarded': 'host=evil.example;proto=https'})
+    assert response.status_code == 403
+    assert count(settings) == 0
+
+
+def test_local_origin_still_works(setup):
+    client, settings = setup
+    assert client.post('/api/inquiries', json=payload(settings),
+                       headers={'Origin': 'http://testserver'}).status_code == 201
+
+
+def test_configured_canonical_sitemap_and_og(tmp_path):
+    import xml.etree.ElementTree as ET
+    settings = Settings(database=tmp_path / 'seo.sqlite3', site_url='https://photos.example')
+    with TestClient(create_app(settings)) as client:
+        for path in ('/', '/portfolio', '/privacy'):
+            html = client.get(path, headers={'Host': 'untrusted.example'}).text
+            assert f'<link rel="canonical" href="https://photos.example{path}">' in html
+            assert 'https://photos.example/static/images/portrait.webp' in html
+        response = client.get('/sitemap.xml')
+        assert response.headers['content-type'].startswith('application/xml')
+        root = ET.fromstring(response.text)
+        assert [loc.text for loc in root.iter('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')] == [
+            'https://photos.example/', 'https://photos.example/portfolio', 'https://photos.example/privacy']
+        assert 'Sitemap: https://photos.example/sitemap.xml' in client.get('/robots.txt').text
+
+
+@pytest.mark.parametrize('url', ['javascript:alert(1)', 'https://a.example/path',
+    'https://user:pass@a.example', 'https://a.example?x=1', 'https://a.example:bad'])
+def test_site_url_rejects_invalid_configuration(url):
+    with pytest.raises(ValueError):
+        Settings(site_url=url)

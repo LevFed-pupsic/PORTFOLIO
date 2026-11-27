@@ -4,9 +4,8 @@ import json
 import logging
 import sqlite3
 from contextlib import asynccontextmanager
-from urllib.parse import urlsplit
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
@@ -38,6 +37,8 @@ def create_app(settings=None):
     app.state.settings = settings
     app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
     templates = Jinja2Templates(directory=BASE / "templates")
+
+    templates.env.globals["site_url"] = settings.site_url
 
     @app.middleware("http")
     async def security_headers(request, call_next):
@@ -79,7 +80,16 @@ def create_app(settings=None):
 
     @app.get("/robots.txt", response_class=PlainTextResponse)
     async def robots():
-        return "User-agent: *\nDisallow: /api/\n"
+        return f"User-agent: *\nDisallow: /api/\nSitemap: {settings.site_url}/sitemap.xml\n"
+
+    @app.get("/sitemap.xml")
+    async def sitemap():
+        from xml.sax.saxutils import escape
+        urls = "".join(f"<url><loc>{escape(settings.site_url + path)}</loc></url>"
+                       for path in ("/", "/portfolio", "/privacy"))
+        return Response('<?xml version="1.0" encoding="UTF-8"?>'
+                        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+                        + urls + '</urlset>', media_type="application/xml")
 
     @app.post("/api/inquiries")
     async def contact(request: Request):
@@ -87,10 +97,10 @@ def create_app(settings=None):
         if request.headers.get("content-type", "").split(";")[0] != "application/json":
             return JSONResponse({"message": "Ожидается JSON."}, status_code=415)
         origin = request.headers.get("origin")
-        if origin and (urlsplit(origin).scheme, urlsplit(origin).netloc) != (
-            request.url.scheme,
-            request.url.netloc,
-        ):
+        # The configured public origin handles TLS termination without trusting
+        # arbitrary Forwarded / X-Forwarded-* headers supplied by a client.
+        allowed_origins = {settings.site_url, str(request.base_url).rstrip("/")}
+        if origin and origin not in allowed_origins:
             return JSONResponse(
                 {"message": "Отправьте форму с этого сайта."}, status_code=403
             )
