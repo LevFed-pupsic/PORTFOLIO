@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>
+{% block title %}{{ site.name }} — портретный и editorial фотограф{% endblock %}
+</title>
+<meta name="description" content="Авторские портреты, истории для брендов и фотография путешествий. Портфолио Александра Морозова. Демонстрационный проект.">
+<meta name="theme-color" content="#10100f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ site.name }} — фотограф">
+<meta property="og:description" content="В поисках настоящего. Портреты, люди и истории.">
+<meta property="og:image" content="{{ request.url_for('static', path='images/portrait.webp') }}">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/css/style.css">
+{% block preload %}{% endblock %}
+<script src="/static/js/main.js" defer>
+</script>
+<script src="/static/js/animations.js" defer>
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+<header class="header">
+<a class="brand" href="/" aria-label="Морозов — главная">
+<span class="brand-mark">M</span>{{ site.brand }}<span class="brand-sub">PHOTOGRAPHY</span>
+</a>
+<button class="menu-toggle" aria-expanded="false" aria-controls="navigation" aria-label="Открыть меню">
+<span>
+</span>
+<span>
+</span>
+</button>
+<nav id="navigation" aria-label="Основная навигация">
+<a href="/#work">Работы</a>
+<a href="/#about">Обо мне</a>
+<a href="/#services">Услуги</a>
+<a class="nav-contact" href="/#contact">Обсудим съёмку <span class="small-star" aria-hidden="true">✦</span>
+</a>
+</nav>
+</header>
+{% block content %}{% endblock %}
+<footer class="footer">
+<a href="/" class="footer-brand">{{ site.brand }}</a>
+<span>© 2026 · Демонстрационный проект</span>
+<a href="/privacy">Конфиденциальность</a>
+<a href="/#main">Наверх</a>
+</footer>
+<dialog class="lightbox" aria-label="Просмотр фотографии">
+<button class="lightbox-close" aria-label="Закрыть просмотр">Закрыть ×</button>
+<div class="lightbox-stage">
+<button class="lightbox-prev" aria-label="Предыдущая фотография">Назад</button>
+<img class="lightbox-image" alt="">
+<button class="lightbox-next" aria-label="Следующая фотография">Далее</button>
+</div>
+<p class="lightbox-caption" aria-live="polite">
+</p>
+</dialog>
+</body>
+</html>

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}{% from 'macros.html' import photo, gallery %}
+{% block preload %}
+<link rel="preload" as="image" href="/static/images/{{ site.hero }}.webp" imagesrcset="/static/images/{{ site.hero }}-small.webp 720w, /static/images/{{ site.hero }}.webp 1600w" imagesizes="(max-width: 700px) 100vw, 55vw">
+{% endblock %}
+{% block content %}
+<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+<div class="hero-kicker eyebrow">ПОРТРЕТЫ · EDITORIAL · ИСТОРИИ</div>
+<h1 id="hero-title">
+<span>{{ site.first_name }}</span>
+<span>{{ site.last_name }}<i>Фотограф</i>
+</span>
+</h1>
+<div class="hero-photo">{{ photo(site.hero,'Портрет мужчины в естественном свете',eager=true) }}<span class="photo-label">ЧУВСТВОВАТЬ. ЗАМЕЧАТЬ. СОХРАНЯТЬ.</span>
+</div>
+<div class="hero-intro">
+<span class="eyebrow warm">В ПОИСКАХ НАСТОЯЩЕГО</span>
+<p>{{ site.intro }}</p>
+<a class="button primary" href="#work">Смотреть работы</a>
+<a class="text-link" href="#contact">Связаться со мной</a>
+</div>
+<div class="hero-bottom">
+<span>{{ site.location }}</span>
+<span>Листайте медленно. Чувствуйте больше.</span>
+</div>
+</section>
+<section class="work-section section" id="work">
+<div class="section-heading reveal">
+<div>
+<p class="eyebrow warm">ИЗБРАННОЕ / 2025 — 2026</p>
+<h2>Больше, чем<br>
+<em>просто кадр.</em>
+</h2>
+</div>
+<p class="section-aside">Маленькие истории о большом.<br>О свете. О людях. О том, что между.</p>
+</div>
+<div class="filters" role="group" aria-label="Фильтр работ">
+<button data-filter="all" aria-pressed="true">Все работы</button>
+<button data-filter="portrait" aria-pressed="false">Портреты</button>
+<button data-filter="editorial" aria-pressed="false">Editorial</button>
+<button data-filter="travel" aria-pressed="false">Пространства</button>
+</div>{{ gallery(site.works) }}<div class="portfolio-link">
+<a class="button outline" href="/portfolio">Полное портфолио</a>
+<span>Каждая история начинается с внимания.</span>
+</div>
+</section>
+<section class="about" id="about">
+<div class="about-top">
+<p class="eyebrow">ЗА ОБЪЕКТИВОМ</p>
+<span>{{ site.name }}</span>
+</div>
+<h2 class="reveal">Видеть свет.<br>
+<em>Чувствовать человека.</em>
+</h2>
+<div class="about-grid">
+<div class="about-photo reveal">{{ photo(site.about_image,'Портретная работа в тёплом свете') }}<span>Свет — мой главный соавтор.</span>
+</div>
+<div class="about-copy reveal">
+<p class="lead">{{ site.bio }}</p>
+<p>{{ site.experience }}</p>
+<div class="about-facts">
+<div>
+<strong>8 лет</strong>
+<span>в диалоге со светом</span>
+</div>
+<div>
+<strong>Без спешки</strong>
+<span>с вниманием к деталям</span>
+</div>
+</div>
+<a class="text-link" href="#contact">Давайте познакомимся</a>
+</div>
+</div>
+<p class="about-word" aria-hidden="true">Чувствовать.</p>
+</section>
+<section class="services section" id="services">
+<div class="section-heading reveal">
+<div>
+<p class="eyebrow warm">ФОРМАТЫ СОТРУДНИЧЕСТВА</p>
+<h2>Ваша идея.<br>
+<em>Мой взгляд.</em>
+</h2>
+</div>
+<p class="section-aside">От первого разговора до готовой серии.<br>Помогу на каждом шаге.</p>
+</div>
+<div class="service-list">
+{% for service in site.services %}
+<article class="service reveal">
+<div>
+<h3>{{ service.name }}</h3>
+<p>{{ service.description }}</p>
+</div>
+<p class="service-details">{{ service.details }}</p>
+<div class="service-action">
+<strong>{{ service.price }}</strong>
+<a class="text-link service-link" href="#contact" data-service="{{ service.id }}">Обсудить съёмку</a>
+</div>
+</article>
+{% endfor %}
+</div>
+<p class="service-note">Готовые фотографии — в течение 14 дней. Аренда студии и работа команды рассчитываются отдельно. Цены демонстрационные.</p>
+</section>
+<section class="contact section" id="contact">
+<div class="contact-title reveal">
+<p class="eyebrow warm">НАЧНЁМ С РАЗГОВОРА</p>
+<h2>У каждой истории<br>есть <em>начало.</em>
+<span class="contact-star" aria-hidden="true">✦</span>
+</h2>
+</div>
+<div class="contact-grid">
+<div class="contact-info">{{ photo(site.contact_image,'Демонстрационный портрет из серии «Тише слов»') }}<a class="email" href="mailto:{{ site.email }}">{{ site.email }}</a>
+<p>{{ site.location }}</p>
+<div class="socials">
+{% for social in site.socials %}
+<a href="{{ social.url }}" target="_blank" rel="noopener noreferrer">{{ social.label }}</a>
+{% endfor %}
+</div>
+<p class="demo-note">Вымышленный фотограф. Фото — Unsplash.<br>Контакты и ссылки на платформы — демонстрационные.</p>
+</div>
+<form id="contact-form" action="/api/inquiries" method="post">
+<h3>Что вы хотите сохранить?</h3>
+<p>Расскажите немного о вашей идее.</p>
+<input type="hidden" name="token" value="{{ token }}">
+<div class="honeypot" aria-hidden="true">
+<label>Ваш сайт<input name="website" tabindex="-1" autocomplete="off">
+</label>
+</div>
+<label for="name">Ваше имя<input id="name" name="name" autocomplete="name" minlength="2" maxlength="80" required placeholder="Как к вам обращаться?">
+</label>
+<label for="email">Email<input id="email" name="email" type="email" autocomplete="email" maxlength="254" required placeholder="you@example.com">
+</label>
+<label for="service">Формат съёмки<select id="service" name="service" required>
+<option value="" disabled selected>Выберите формат</option>
+{% for service in site.services %}
+<option value="{{ service.id }}">{{ service.name }}</option>
+{% endfor %}
+</select>
+</label>
+<label for="message">Ваша идея<textarea id="message" name="message" minlength="10" maxlength="2000" rows="3" required placeholder="Настроение, дата, место. Или просто пара слов о вас.">
+</textarea>
+</label>
+<label class="consent">
+<input type="checkbox" name="consent" required>
+<span>Соглашаюсь с <a href="/privacy">условиями обработки данных</a>
+</span>
+</label>
+<button type="submit" class="button primary">Отправить заявку</button>
+<p id="form-status" role="status" aria-live="polite">
+</p>
+<p class="demo-note">Демоформа действительно сохраняет данные. Для проверки используйте вымышленные контакты.</p>
+<noscript>
+<p>Для отправки заявки включите JavaScript.</p>
+</noscript>
+</form>
+</div>
+</section>
+</main>
+{% endblock %}

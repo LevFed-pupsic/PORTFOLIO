@@ -1,0 +1,20 @@
+{% macro photo(name, alt, class='', eager=false) -%}
+<img class="{{ class }}" src="/static/images/{{ name }}.webp" srcset="/static/images/{{ name }}-small.webp 720w, /static/images/{{ name }}.webp 1600w" sizes="(max-width: 700px) 100vw, 55vw" alt="{{ alt }}" width="1200" height="1500" {% if eager %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %} decoding="async">
+{%- endmacro %}
+{% macro gallery(works) %}
+<div class="gallery">
+{% for work in works %}
+<figure class="work reveal" data-category="{{ work.filter }}">
+<button class="photo-button" data-full="/static/images/{{ work.image }}.webp" data-caption="{{ work.title }} · {{ work.category }} · {{ work.year }}" aria-label="Открыть фотографию: {{ work.title }}">{{ photo(work.image,work.alt) }}<span class="photo-open">Смотреть</span>
+</button>
+<figcaption>
+<div>
+<h3>{{ work.title }}</h3>
+<span>{{ work.category }}</span>
+</div>
+<span>{{ work.year }}</span>
+</figcaption>
+</figure>
+{% endfor %}
+</div>
+{% endmacro %}

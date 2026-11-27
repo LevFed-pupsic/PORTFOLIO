@@ -1,0 +1,44 @@
+[
+  {
+    "viewport": 320,
+    "clientWidth": 305,
+    "scrollHeight": 7784,
+    "scrollWidth": 305
+  },
+  {
+    "viewport": 375,
+    "clientWidth": 360,
+    "scrollHeight": 7944,
+    "scrollWidth": 360
+  },
+  {
+    "viewport": 390,
+    "clientWidth": 375,
+    "scrollHeight": 8010,
+    "scrollWidth": 375
+  },
+  {
+    "viewport": 768,
+    "clientWidth": 753,
+    "scrollHeight": 6451,
+    "scrollWidth": 753
+  },
+  {
+    "viewport": 1024,
+    "clientWidth": 1009,
+    "scrollHeight": 6844,
+    "scrollWidth": 1009
+  },
+  {
+    "viewport": 1440,
+    "clientWidth": 1425,
+    "scrollHeight": 7752,
+    "scrollWidth": 1425
+  },
+  {
+    "viewport": 1920,
+    "clientWidth": 1905,
+    "scrollHeight": 8692,
+    "scrollWidth": 1905
+  }
+]

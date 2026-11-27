@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% from 'macros.html' import gallery %}{% block title %}Все работы — {{ site.name }}{% endblock %}{% block content %}
+<main id="main" class="section archive">
+<p class="eyebrow warm">ПОРТФОЛИО / 2025 — 2026</p>
+<h1>Истории<br>
+<em>в фотографиях.</em>
+</h1>
+<p class="archive-intro">Полная демонстрационная коллекция. Откройте кадр, чтобы рассмотреть детали.</p>{{ gallery(site.works) }}<a href="/#contact" class="button primary">Создадим вашу историю</a>
+</main>
+{% endblock %}
