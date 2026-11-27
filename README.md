@@ -1,22 +1,28 @@
-# MOROZOV — Cinematic Photography Portfolio
+# MOROZOV v2 — Cinematic Editorial Photography
 
 Полноценный демонстрационный сайт фотографа: FastAPI + Jinja2 + SQLite, HTML/CSS и обычный JavaScript. Фотограф, биография, цены и контакты вымышлены; фотографии предоставлены Unsplash, а не сняты персонажем сайта.
+
+Рабочий сайт (предыдущая опубликованная версия): https://morozov-photography.de2.netrun.io/ . v2 подготовлена отдельно в `morozov-v2`; в production не развёрнута.
+
+[Что изменилось](CHANGELOG.md) · [Сравнение до/после](docs/REVIEW.html) · [Скриншоты](docs/screenshots) · [Результаты проверок](docs/TEST_REPORT.md) · [Прогресс](PROGRESS.md)
 
 ## Что работает
 
 - Главная страница: представление, галерея с фильтрами, биография, услуги и форма.
 - Отдельные `/portfolio` и `/privacy`.
 - Полноэкранный просмотр в `dialog`, кнопки, стрелки клавиатуры, Escape и свайпы.
-- Мобильное меню, мягкие появления, параллакс до 16 px, `prefers-reduced-motion`.
+- Мобильное меню, мягкие появления, параллакс до 10 px, `prefers-reduced-motion`.
 - Серверная валидация, сохранение в SQLite и обработка ошибок.
 - Подписанный токен формы, honeypot, задержка 2 секунды, 5 новых заявок за 10 минут с одного адреса подключения, дедупликация одинакового содержимого за 24 часа.
 - Локальные WebP, мобильные варианты и lazy loading. Никаких CDN или внешних шрифтов.
+- 12-колоночная галерея, панорамная фотосекция, светлая биография, нумерованные услуги и редакционная обложка.
+- Canonical/OG/sitemap, безопасный публичный Origin за HTTPS-прокси.
 
 ## Запуск на Windows
 
 Проверенная серверная среда: Python 3.12 на Linux. Команды ниже предназначены для PowerShell Windows; сама Windows в этой сессии не тестировалась.
 
-1. Распакуйте архив. Откройте терминал **в папке `morozov`**, где лежит `requirements.txt`.
+1. Распакуйте архив. Откройте терминал **в распакованной папке проекта**, где лежит `requirements.txt`.
 2. Создайте окружение и установите зависимости:
 
 ```powershell
@@ -28,7 +34,7 @@ py -3.12 -m venv .venv
 
 ```powershell
 $env:APP_SECRET = .\.venv\Scripts\python.exe -c "import secrets; print(secrets.token_hex(32))"
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 4. Откройте http://127.0.0.1:8000 . Остановка сервера: `Ctrl+C`.
@@ -84,7 +90,7 @@ $env:APP_SECRET = .\.venv\Scripts\python.exe -c "import secrets; print(secrets.t
 - Используйте HTTPS, один экземпляр приложения и резервное копирование SQLite. Не храните SQLite на временном диске или общем сетевом томе.
 - Если есть reverse proxy, доверяйте forwarded-заголовкам только его известному адресу. Иначе определение IP для лимитов и проверка Origin могут работать неправильно. Не включайте доверие ко всем адресам без проверки схемы развёртывания.
 - Замените демоконтакты, ссылки на главные страницы платформ, биографию, цены и текст `/privacy` до коммерческого использования.
-- Добавьте абсолютный canonical URL и sitemap после выбора реального домена. OG image формируется из адреса запроса.
+- `SITE_URL` задаёт абсолютный canonical, OG и `/sitemap.xml`. По умолчанию — https://morozov-photography.de2.netrun.io . Для другого домена задайте только origin без пути, query и логина; неверная конфигурация отклоняется при старте.
 - Лимит на Python-уровне — базовая защита формы, не DDoS-защита. Для публичного сайта добавьте ограничения запросов на reverse proxy. Журналы самого хостинга могут сохранять IP.
 - Ограничьте доступ к файлу БД системными правами, определите срок хранения заявок и порядок их удаления. Изображения в `static` публичны; ничего приватного туда не кладите.
 
@@ -95,3 +101,34 @@ $env:APP_SECRET = .\.venv\Scripts\python.exe -c "import secrets; print(secrets.t
 ## Служебный предпросмотр
 
 `package.json` и `scripts/preview.py` — адаптер среды, в которой сделаны скриншоты. Node.js для обычного запуска не нужен, сборка frontend не требуется. Можно удалить оба служебных файла.
+
+## Обновление GitHub и предварительный просмотр
+
+Ветка `main` не изменяется. Если draft PR уже создан, изучите его Files changed и материалы в `docs/`. Для локального просмотра отдельной ветки:
+
+```powershell
+git fetch origin
+git switch --track origin/morozov-v2
+```
+
+Если ветка уже есть: `git switch morozov-v2`. Затем выполните шаги установки и запуска выше. Не запускайте preview с производственной базой. Для теста задайте `$env:DATABASE_PATH = "var/preview.sqlite3"`.
+
+Если переносите изменения из ZIP в собственный клон, сначала создайте `git switch -c morozov-v2`, затем скопируйте исходники из архива поверх проекта. Не копируйте `.venv`, `.env` или базу. Проверьте `git status` и тесты, затем:
+
+```powershell
+git add app tests scripts docs README.md CHANGELOG.md PROGRESS.md .gitignore .env.example
+git commit -m "Modernize MOROZOV photography portfolio"
+git push -u origin morozov-v2
+```
+
+На GitHub создайте **Draft pull request**: base `main`, compare `morozov-v2`. Не используйте force push, не сливайте PR и не запускайте production deploy до утверждения владельцем. ZIP ветки доступен через **Code → Download ZIP** после выбора `morozov-v2`.
+
+## HTTPS за reverse proxy
+
+`SITE_URL` — доверенный публичный origin, например `https://morozov-photography.de2.netrun.io`. Сервер принимает его в заголовке Origin даже при внутреннем HTTP между proxy и Uvicorn. Также остаётся локальный same-origin для разработки. Чужой Origin не разрешается по присланному `X-Forwarded-Host` или `Forwarded`.
+
+Настройте доверие к адресу реального proxy в Uvicorn, чтобы корректно определять IP для rate limit: `--proxy-headers --forwarded-allow-ips=АДРЕС_ПРОКСИ`. Не задавайте `*` для сервера, доступного клиентам напрямую. Нужный адрес зависит от Netrun и здесь не выдумывается. Существующий порт production не менялся; стандартная команда сохранена. Схема SQLite осталась прежней, миграция не требуется.
+
+## Дополнительные проверки frontend
+
+Для обычного запуска сайта Node.js не нужен. Опционально установите Playwright для `scripts/browser_checks.cjs`; сценарий работает только с localhost/127.0.0.1 и требует отдельной тестовой базы. В Linux использован `/usr/bin/chromium`; для другого пути задайте `BROWSER_PATH`. Скрипт снимает реальные PNG и обновляет browser/viewport reports. Он не запускает Lighthouse или axe автоматически: их сохранённые отчёты относятся к описанному в TEST_REPORT запуску.

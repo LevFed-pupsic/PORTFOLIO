@@ -1,0 +1,29 @@
+/* Navigation and original photos remain reachable without JavaScript. */
+@media (max-width: 700px) {
+  .header {
+    height: auto;
+    min-height: 76px;
+    flex-wrap: wrap;
+    padding-top: 15px;
+  }
+  nav {
+    position: static;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+    padding: 15px 0;
+    background: none;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  nav a {
+    font-size: 12px;
+    padding: 8px 0;
+  }
+  .menu-toggle {
+    display: none;
+  }
+}

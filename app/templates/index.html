@@ -1,28 +1,22 @@
-{% extends 'base.html' %}{% from 'macros.html' import photo, gallery %}
+{% extends 'base.html' %}{% from 'macros.html' import photo, gallery, filters with context %}
 {% block preload %}
-<link rel="preload" as="image" href="/static/images/{{ site.hero }}.webp" imagesrcset="/static/images/{{ site.hero }}-small.webp 720w, /static/images/{{ site.hero }}.webp 1600w" imagesizes="(max-width: 700px) 100vw, 55vw">
+<link rel="preload" as="image" fetchpriority="high" href="/static/images/{{ site.hero }}.webp" imagesrcset="/static/images/{{ site.hero }}-small.webp {{ site.image_dimensions[site.hero][2] }}w, /static/images/{{ site.hero }}.webp {{ site.image_dimensions[site.hero][0] }}w" imagesizes="(max-width: 700px) 85vw, 42vw">
 {% endblock %}
 {% block content %}
 <main id="main">
 <section class="hero" aria-labelledby="hero-title">
-<div class="hero-kicker eyebrow">ПОРТРЕТЫ · EDITORIAL · ИСТОРИИ</div>
-<h1 id="hero-title">
-<span>{{ site.first_name }}</span>
-<span>{{ site.last_name }}<i>Фотограф</i>
-</span>
-</h1>
-<div class="hero-photo">{{ photo(site.hero,'Портрет мужчины в естественном свете',eager=true) }}<span class="photo-label">ЧУВСТВОВАТЬ. ЗАМЕЧАТЬ. СОХРАНЯТЬ.</span>
-</div>
+<div class="hero-copy">
+<p class="hero-kicker eyebrow"><span class="status-dot" aria-hidden="true"></span> ПОРТРЕТЫ / EDITORIAL / ИСТОРИИ</p>
+<p class="hero-role">{{ site.hero_note }}</p>
+<h1 id="hero-title"><span>{{ site.first_name }}</span><span><em>{{ site.last_name }}.</em></span></h1>
 <div class="hero-intro">
-<span class="eyebrow warm">В ПОИСКАХ НАСТОЯЩЕГО</span>
 <p>{{ site.intro }}</p>
-<a class="button primary" href="#work">Смотреть работы</a>
-<a class="text-link" href="#contact">Связаться со мной</a>
+<div class="hero-actions"><a class="button primary" href="#work">Смотреть работы <span class="icon-arrow" aria-hidden="true"></span></a><a class="text-link" href="#contact">Обсудим съёмку</a></div>
 </div>
-<div class="hero-bottom">
-<span>{{ site.location }}</span>
-<span>Листайте медленно. Чувствуйте больше.</span>
+<div class="hero-location"><span class="eyebrow">ОСНОВАНО НА ЧУВСТВАХ</span><p>{{ site.location }}</p></div>
 </div>
+<figure class="hero-visual"><div class="hero-photo">{{ photo(site.hero,'Портрет мужчины в естественном свете',eager=true, sizes='(max-width: 700px) 85vw, 42vw') }}</div><figcaption><span>01 / ЛИЧНОЕ ПРИСУТСТВИЕ</span><span>Естественный свет</span></figcaption></figure>
+<div class="hero-bottom"><span>Незаметные моменты. Настоящие истории.</span><a href="#work">Листайте, чтобы увидеть <span aria-hidden="true">↓</span></a></div>
 </section>
 <section class="work-section section" id="work">
 <div class="section-heading reveal">
@@ -34,15 +28,15 @@
 </div>
 <p class="section-aside">Маленькие истории о большом.<br>О свете. О людях. О том, что между.</p>
 </div>
-<div class="filters" role="group" aria-label="Фильтр работ">
-<button data-filter="all" aria-pressed="true">Все работы</button>
-<button data-filter="portrait" aria-pressed="false">Портреты</button>
-<button data-filter="editorial" aria-pressed="false">Editorial</button>
-<button data-filter="travel" aria-pressed="false">Пространства</button>
-</div>{{ gallery(site.works) }}<div class="portfolio-link">
+{{ filters(site.works) }}{{ gallery(site.works) }}<div class="portfolio-link">
 <a class="button outline" href="/portfolio">Полное портфолио</a>
 <span>Каждая история начинается с внимания.</span>
 </div>
+</section>
+<section class="feature" aria-labelledby="feature-title">
+{{ photo(site.feature.image, site.feature.alt, sizes="100vw") }}
+<div class="feature-copy"><p class="eyebrow">{{ site.feature.label }}</p><h2 id="feature-title">{{ site.feature.title }}<br><em>{{ site.feature.subtitle }}</em></h2><a class="text-link" href="/portfolio">Весь визуальный дневник <span class="icon-arrow" aria-hidden="true"></span></a></div>
+<p class="feature-caption">{{ site.feature.caption }}</p>
 </section>
 <section class="about" id="about">
 <div class="about-top">
@@ -86,6 +80,7 @@
 <div class="service-list">
 {% for service in site.services %}
 <article class="service reveal">
+<span class="service-number" aria-hidden="true">0{{ loop.index }}</span>
 <div>
 <h3>{{ service.name }}</h3>
 <p>{{ service.description }}</p>
@@ -104,7 +99,7 @@
 <div class="contact-title reveal">
 <p class="eyebrow warm">НАЧНЁМ С РАЗГОВОРА</p>
 <h2>У каждой истории<br>есть <em>начало.</em>
-<span class="contact-star" aria-hidden="true">✦</span>
+<span class="contact-star icon-arrow" aria-hidden="true"></span>
 </h2>
 </div>
 <div class="contact-grid">
